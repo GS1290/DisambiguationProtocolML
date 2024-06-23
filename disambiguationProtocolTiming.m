@@ -2,7 +2,7 @@
 hotkey('x', 'escape_screen(); assignin(''caller'',''continue_'',false);');  % Stop the task immediately if "x" key is pressed
 set_bgcolor([0.5 0.5 0.5]);                                                 % Sets subject screen background color to Gray
 bhv_variable('Stimuli', TrialRecord.User.Stimuli);                          % Save the current trial stimuli in data.UserVars variable
-bhv_variable('Condition', TrialRecord.User.Condition);                          % Save the current trial condition in data.UserVars variable
+bhv_variable('Condition', TrialRecord.User.Condition);                      % Save the current trial condition in data.UserVars variable
 
 % Initializing task variables
 if exist('eye_','var'), tracker = eye_;     % detect an available tracker

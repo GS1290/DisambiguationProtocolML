@@ -11,7 +11,7 @@ persistent imageList
 persistent conTable
 persistent stim2img
 persistent conList                  % List of conditions left to display in a block
-persistent conPrev                  % List of stimuli of the current block displayed in the prev trial
+persistent conPrev                  % Condition displayed in the prev trial
 if isempty(timing_filename_returned)
     imageDir = dir(fullfile('Images', 'ambiguous'));                % get the folder content of "Images/ambiguous"
     filename = {imageDir.name};                                     % get the filenames in "Images/ambiguous"

@@ -11,7 +11,7 @@ persistent imageList
 persistent conTable
 persistent stim2img
 persistent conList                  % List of conditions left to display in a block
-persistent conPrev                  % List of stimuli of the current block displayed in the prev trial
+persistent conPrev                  % Condition displayed in the prev trial
 if isempty(timing_filename_returned)
     imageDir = dir(fullfile('Images', 'ambiguous'));                % get the folder content of "Images/ambiguous"
     filename = {imageDir.name};                                     % get the filenames in "Images/ambiguous"
@@ -61,7 +61,7 @@ if isempty(TrialRecord.TrialErrors)                                         % If
     condition = 1;                                                          % set the condition # to 1
 elseif ~isempty(TrialRecord.TrialErrors) && 0==TrialRecord.TrialErrors(end) % If the last trial is a success
     conList = setdiff(conList, conPrev);                                    % remove previous trial condition from the list of conditions
-    condition = mod(condition, length(imageList))+1;                        % increment the condition #
+    condition = mod(condition, length(imageList)*2)+1;                      % increment the condition #
 end
 
 % Initialize the conditions for a new block
