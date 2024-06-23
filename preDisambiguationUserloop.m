@@ -18,7 +18,8 @@ if isempty(timing_filename_returned)
     imageList = filename(contains(filename, '.tif'));               % select only tif files (the list is not sorted by the image number order)
     conTable = table('Size', [length(imageList), 7], 'VariableNames', ["condition", "img1", "img2", "img3", "stim1", "stim2", "stim3"], ...
         'VariableTypes', ["double", "string", "string", "string", "double", "double", "double"]);
-    stim2img = dictionary;
+    stim2img = table('Size', [length(imageList)*3, 2], 'VariableNames', ["stim", "img"], ...
+        'VariableTypes', ["double", "string"]);
     for i = 1:length(imageList)
         img1 = "A"+num2str(i);
         stim1 = i;
@@ -33,7 +34,9 @@ if isempty(timing_filename_returned)
         stim3 = stim1;
 
         conTable{i,:} = [i, img1, img2, img3, stim1, stim2, stim3];
-        stim2img([3*(i-1)+1 3*(i-1)+2 3*(i-1)+3]) = [img1 img2 img3];
+        stim2img{3*(i-1)+1, :} = [3*(i-1)+1, img1];
+        stim2img{3*(i-1)+2, :} = [3*(i-1)+2, img2];
+        stim2img{3*(i-1)+3, :} = [3*(i-1)+3, img3];
     end
     timing_filename_returned = true;
     return
