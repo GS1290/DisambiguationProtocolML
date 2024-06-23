@@ -1,4 +1,4 @@
-function [C,timingfile,userdefined_trialholder] = preDisambiguationUserloop(MLConfig,TrialRecord)
+function [C,timingfile,userdefined_trialholder] = disambiguationUserloop(MLConfig,TrialRecord)
 
 % default return value
 C = [];
@@ -16,18 +16,30 @@ if isempty(timing_filename_returned)
     imageDir = dir(fullfile('Images', 'ambiguous'));                % get the folder content of "Images/ambiguous"
     filename = {imageDir.name};                                     % get the filenames in "Images/ambiguous"
     imageList = filename(contains(filename, '.tif'));               % select only tif files (the list is not sorted by the image number order)
-    conTable = table('Size', [length(imageList), 7], 'VariableNames', ["condition", "img1", "img2", "img3", "stim1", "stim2", "stim3"], ...
+    conTable = table('Size', [length(imageList)*2, 7], 'VariableNames', ["condition", "img1", "img2", "img3", "stim1", "stim2", "stim3"], ...
         'VariableTypes', ["double", "string", "string", "string", "double", "double", "double"]);
-    stim2img = table('Size', [length(imageList)*3, 2], 'VariableNames', ["stim", "img"], ...
+    stim2img = table('Size', [length(imageList)*6, 2], 'VariableNames', ["stim", "img"], ...
         'VariableTypes', ["double", "string"]);
-    for i = 1:length(imageList)
-        img1 = "A"+num2str(i);
-        if mod(i,2)==0
-            img2 = "A"+num2str(i-1);
+    j=1;
+    for i = 1:length(imageList)*2
+        if mod(i,4)==1
+            img1 = "A"+num2str(j);
+            img2 = "I"+num2str(j);
+            img3 = img1;
+        elseif mod(i,4)==2
+            img1 = "A"+num2str(j+1);
+            img2 = "I"+num2str(j+1);
+            img3 = img1;
+        elseif mod(i,4)==3
+            img1 = "A"+num2str(j);
+            img2 = "I"+num2str(j+1);
+            img3 = img1;
         else
-            img2 = "A"+num2str(i+1);
+            img1 = "A"+num2str(j+1);
+            img2 = "I"+num2str(j);
+            img3 = img1;
+            j=j+2;
         end
-        img3 = img1;
         s1 = 3*(i-1)+1;
         s2 = 3*(i-1)+2;
         s3 = 3*(i-1)+3;
@@ -63,7 +75,7 @@ conPrev = conCurrent;
 
 % Set the stimuli
 stim1 = fullfile('Images', 'ambiguous', conTable.img1(conCurrent)+".tif");
-stim2 = fullfile('Images', 'ambiguous', conTable.img2(conCurrent)+".tif");
+stim2 = fullfile('Images', 'unambiguous', conTable.img2(conCurrent)+".tif");
 stim3 = fullfile('Images', 'ambiguous', conTable.img3(conCurrent)+".tif");
 
 C = {sprintf('pic(%s,0,0)',stim1), ...
