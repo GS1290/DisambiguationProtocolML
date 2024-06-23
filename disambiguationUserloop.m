@@ -66,7 +66,7 @@ end
 
 % Initialize the conditions for a new block
 if isempty(conList)                                                         % If there are no stimuli left in the block
-    conList = 1:length(imageList);
+    conList = 1:length(imageList)*2;
     block=block+1;
 end
 
