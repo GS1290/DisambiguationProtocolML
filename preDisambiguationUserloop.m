@@ -9,14 +9,16 @@ userdefined_trialholder = '';
 persistent timing_filename_returned
 persistent imageList
 persistent conTable
+persistent stim2img
 persistent conList                  % List of conditions left to display in a block
 persistent conPrev                  % List of stimuli of the current block displayed in the prev trial
 if isempty(timing_filename_returned)
-    imageDir = dir('Images');                                       % get the folder content of "Images/"
-    filename = {imageDir.name};                                     % get the filenames in "Images/"
+    imageDir = dir(fullfile('Images', 'ambiguous'));                % get the folder content of "Images/ambiguous"
+    filename = {imageDir.name};                                     % get the filenames in "Images/ambiguous"
     imageList = filename(contains(filename, '.tif'));               % select only tif files (the list is not sorted by the image number order)
-    conTable = table('Size', [length(imageList), 6], 'VariableNames', ["img1", "img2", "img3", "stim1", "stim2", "stim3"], ...
-        'VariableTypes', ["string", "string", "string", "double", "double", "double"]);
+    conTable = table('Size', [length(imageList), 7], 'VariableNames', ["condition", "img1", "img2", "img3", "stim1", "stim2", "stim3"], ...
+        'VariableTypes', ["double", "string", "string", "string", "double", "double", "double"]);
+    stim2img = dictionary;
     for i = 1:length(imageList)
         img1 = "A"+num2str(i);
         stim1 = i;
@@ -30,11 +32,9 @@ if isempty(timing_filename_returned)
         img3 = img1;
         stim3 = stim1;
 
-        conTable{i,:} = [img1, img2, img3, stim1, stim2, stim3];
+        conTable{i,:} = [i, img1, img2, img3, stim1, stim2, stim3];
+        stim2img([3*(i-1)+1 3*(i-1)+2 3*(i-1)+3]) = [img1 img2 img3];
     end
-    % imageNum = cellfun(@(x) sscanf(x, 'Image%d.tif'), imageList);   % get the image number
-    % [imageNum, idxOrder] = sort(imageNum);                          % sort the image number list
-    % imageList = imageList(idxOrder);                                % sort the image list
     timing_filename_returned = true;
     return
 end
@@ -56,13 +56,13 @@ if isempty(conList)                                                         % If
     block=block+1;
 end
 
-conCurrent = datasample(conList, 1, 'Replace',false);                     % randomly sample a stimuli from the list
+conCurrent = datasample(conList, 1, 'Replace',false);                       % randomly sample a stimuli from the list
 conPrev = conCurrent;
 
 % Set the stimuli
-stim1 = fullfile('Images', 'ambiguous', [conTable.img1(conCurrent), '.tif']);
-stim2 = fullfile('Images', 'ambiguous', [conTable.img2(conCurrent), '.tif']);
-stim3 = fullfile('Images', 'ambiguous', [conTable.img3(conCurrent), '.tif']);
+stim1 = fullfile('Images', 'ambiguous', conTable.img1(conCurrent)+".tif");
+stim2 = fullfile('Images', 'ambiguous', conTable.img2(conCurrent)+".tif");
+stim3 = fullfile('Images', 'ambiguous', conTable.img3(conCurrent)+".tif");
 
 C = {sprintf('pic(%s,0,0)',stim1), ...
     sprintf('pic(%s,0,0)',stim2), ...
@@ -71,6 +71,8 @@ C = {sprintf('pic(%s,0,0)',stim1), ...
 stimCurrent = [conTable.stim1(conCurrent), conTable.stim2(conCurrent), conTable.stim3(conCurrent)];
 TrialRecord.User.Stimuli = stimCurrent;                     % save the stimuli for the next trial in user variable
 TrialRecord.User.Condition = conCurrent;                    % save the condition for the next trial in user variable
+TrialRecord.User.conTable = conTable;
+TrialRecord.User.stim2img = stim2img;
 % Set the block number and the condition number of the next trial
 TrialRecord.NextBlock = block;
 TrialRecord.NextCondition = condition;

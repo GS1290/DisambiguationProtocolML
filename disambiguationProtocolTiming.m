@@ -2,6 +2,7 @@
 hotkey('x', 'escape_screen(); assignin(''caller'',''continue_'',false);');  % Stop the task immediately if "x" key is pressed
 set_bgcolor([0.5 0.5 0.5]);                                                 % Sets subject screen background color to Gray
 bhv_variable('Stimuli', TrialRecord.User.Stimuli);                          % Save the current trial stimuli in data.UserVars variable
+bhv_variable('Condition', TrialRecord.User.Condition);                          % Save the current trial condition in data.UserVars variable
 
 % Initializing task variables
 if exist('eye_','var'), tracker = eye_;     % detect an available tracker
@@ -57,7 +58,7 @@ fix1.Threshold = fix_window;    % Examines if the gaze is in the Threshold windo
 wth1 = WaitThenHold(fix1);      % 
 wth1.WaitTime = wait_for_fix;   % 
 wth1.HoldTime = 1;              % Supposed to be 0, but if kept 0 ML thinks the subject didn't hold fixation and WTH adapter's success condition doesn't become true
-wth1.AllowEarlyFix = false;     % End the scene if the monkey is fixating before the scene starts
+wth1.AllowEarlyFix = true;     % End the scene if the monkey is fixating before the scene starts
 con1 = Concurrent(wth1);        %
 con1.add(sndTrialStart);        % Start the trial and concurrently play the trialStart audio
 
